@@ -1,0 +1,27 @@
+* {
+    box-sizing: border-box;
+  }
+body {
+    background-color: rgb(237, 237, 243);
+}
+header{
+    margin: 20px;
+    padding: 15px;
+    text-align: center;
+    font-size: x-large;
+    width: 100%;
+}
+img {
+    width: 100%;
+  }
+.container {
+    display: grid;
+    grid-template-rows: 100px minmax(calc(100vh - 170px) , 1fr) 50px;
+    gap: 10px;
+  }
+  
+.image-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+  }
