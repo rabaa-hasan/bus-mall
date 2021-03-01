@@ -45,28 +45,28 @@ function Product(url) {
 Product.all = [];
 Product.counter = 0;
 
-for( let i = 0; i < productArray.length; i++ ) {
-  new Product( productArray[i] );
+for (let i = 0; i < productArray.length; i++) {
+  new Product(productArray[i]);
 }
 
 function renderNewProduct() {
-  let leftIndex = randomNumber( 0, Product.all.length - 1 );
+  let leftIndex = randomNumber(0, Product.all.length - 1);
   leftImage.src = Product.all[leftIndex].image;
   leftImage.alt = Product.all[leftIndex].name;
   leftProductIndex = leftIndex;
 
   let centerIndex;
   do {
-    centerIndex = randomNumber( 0, Product.all.length - 1 );
-  } while( leftIndex === centerIndex);
+    centerIndex = randomNumber(0, Product.all.length - 1);
+  } while (leftIndex === centerIndex);
   centerImage.src = Product.all[centerIndex].image;
   centerImage.alt = Product.all[centerIndex].name;
   centerProductIndex = centerIndex;
 
   let rightIndex;
   do {
-    rightIndex = randomNumber( 0, Product.all.length - 1 );
-  } while( leftIndex === rightIndex || leftIndex === centerIndex || centerIndex === rightIndex);
+    rightIndex = randomNumber(0, Product.all.length - 1);
+  } while (leftIndex === rightIndex || leftIndex === centerIndex || centerIndex === rightIndex);
 
   rightImage.src = Product.all[rightIndex].image;
   rightImage.alt = Product.all[rightIndex].name;
@@ -77,61 +77,97 @@ function renderNewProduct() {
   Product.all[rightIndex].shown++;
 }
 
+
 let button = document.getElementById( 'viewResults' );
 button.style.visibility='hidden';
 
 
-function handelClick( event ) {
-  if( Product.counter <= clickCounter ) {
+function handelClick(event) {
+  if (Product.counter < clickCounter) {
     const clickedElement = event.target;
-    if( clickedElement.id === 'leftImage' || clickedElement.id === 'centerImage' || clickedElement.id === 'rightImage' ) {
-
-      if( clickedElement.id === 'leftImage' ) {
+    if (clickedElement.id === 'leftImage' || clickedElement.id === 'rightImage' || clickedElement.id === 'centerImage') {
+      if (clickedElement.id === 'leftImage') {
         Product.all[leftProductIndex].clicks++;
       }
-
-      if( clickedElement.id === 'centerImage' ) {
-        Product.all[centerProductIndex].clicks++;
-      }
-
-      if( clickedElement.id === 'rightImage' ) {
+      if (clickedElement.id === 'rightImage') {
         Product.all[rightProductIndex].clicks++;
       }
-
+      if (clickedElement.id === 'centerImage') {
+        Product.all[centerProductIndex].clicks++;
+      }
       Product.counter++;
       renderNewProduct();
+      console.log(Product.counter);
       console.log(Product.all);
     }
+  }else{
+    button.style.visibility = 'visible';
+    removeHandler();
   }
-  else {
-    button.style.visibility='visible';
-    console.log( Product.all );
+}
+imageSection.addEventListener( 'click', handelClick);
+
+
+function viewResults(){
+  const parentElement = document.getElementById( 'results' );
+  const ulElement = document.createElement( 'ul' );
+  parentElement.appendChild( ulElement );
+  for ( let i =0; i < Product.all.length; i++ ){
+    const liElement = document.createElement( 'li' );
+    ulElement.appendChild( liElement );
+    liElement.textContent = `${Product.all[i].name} had ${Product.all[i].clicks} votes, and was seen ${Product.all[i].shown}  times.`;
   }
 }
 
+function removeHandler() {
+  document.getElementById( 'imageSection' ).removeEventListener( 'click', handelClick );
+}
 
-
-
-imageSection.addEventListener( 'viewResult', handelClick );
-
-// function viewResult() {
-//   const parentElement = document.getElementById( 'viewResult' );
-//   const ulElement = document.createElement( 'ul' );
-//   parentElement.appendChild( ulElement );
-//   for ( let i =0; i < Product.all.length; i++ ){
-//     const liElement = document.createElement( 'li' );
-//     ulElement.appendChild( liElement );
-//     liElement.textContent = `${Product.all[i].name} has ${Product.all[i].clicks} clicks, and has been watched ${Product.all[i].shown}  times.`;
-//   }
-// }
-
-
+function renderChart(){
+  let productsNames = [];
+  let productsClicks = [];
+  let productsViews =[];
+  for(let i = 0 ; i < Product.all.length ; i++){
+    let productName = Product.all[i].name;
+    productsNames.push(productName);
+    let productLikes = Product.all[i].clicks;
+    productsClicks.push(productLikes);
+    let productView = Product.all[i].shown;
+    productsViews.push(productView);
+  }
+  let ctx = document.getElementById('chart').getContext('2d');
+  let chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: productsNames,
+      datasets: [{
+        label: '# of Votes',
+        data: productsClicks,
+        backgroundColor: 'rgba(138, 43, 226, 0.2)',
+        borderColor: 'rgba(138, 43, 226, 1)',
+        borderWidth: 1
+      }, {
+        label: '# of Views',
+        data: productsViews,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  });
+}
 // Helper function
 function randomNumber( min, max ) {
   return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
 }
 
 renderNewProduct();
-
-
-
