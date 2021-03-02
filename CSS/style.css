@@ -30,9 +30,15 @@ button{
   margin: auto;
   display: block;
   align-items: center;
+  background-color: rgb(63, 63, 179);
+  color: rgb(236, 244, 252);
 }
 
 #results {
   padding: 10px;
   margin: 10px;
+}
+ul li{
+  list-style-type: disc;
+  margin: 8px;
 }
