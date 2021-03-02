@@ -39,6 +39,7 @@ function Product(url) {
   this.shown = 0;
 
   Product.all.push(this);
+
 }
 
 
@@ -49,11 +50,14 @@ for (let i = 0; i < productArray.length; i++) {
   new Product(productArray[i]);
 }
 
+let indexes = [];
+
 function renderNewProduct() {
   let leftIndex = randomNumber(0, Product.all.length - 1);
   leftImage.src = Product.all[leftIndex].image;
   leftImage.alt = Product.all[leftIndex].name;
   leftProductIndex = leftIndex;
+  indexes.push(leftIndex);
 
   let centerIndex;
   do {
@@ -62,6 +66,7 @@ function renderNewProduct() {
   centerImage.src = Product.all[centerIndex].image;
   centerImage.alt = Product.all[centerIndex].name;
   centerProductIndex = centerIndex;
+  indexes.push(centerIndex);
 
   let rightIndex;
   do {
@@ -71,6 +76,7 @@ function renderNewProduct() {
   rightImage.src = Product.all[rightIndex].image;
   rightImage.alt = Product.all[rightIndex].name;
   rightProductIndex = rightIndex;
+  indexes.push(rightIndex);
 
   Product.all[leftIndex].shown++;
   Product.all[centerIndex].shown++;
@@ -96,6 +102,7 @@ function handelClick(event) {
         Product.all[centerProductIndex].clicks++;
       }
       Product.counter++;
+      localStorage.setItem( 'Products', JSON.stringify( Product.all ) );
       renderNewProduct();
       console.log(Product.counter);
       console.log(Product.all);
@@ -167,7 +174,26 @@ function renderChart(){
 }
 // Helper function
 function randomNumber( min, max ) {
-  return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+  let index = Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+  for( let i = 0;i < indexes.length;i++ ){
+    if ( index === indexes[i] ){
+      index = Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+    }
+  }return( index );
+
 }
+
+
+function getData() {
+  const data = localStorage.getItem('Products');
+  if(data) {
+    const objData = JSON.parse(data);
+    Product.all = objData;
+    renderNewProduct();
+  }
+}
+
+
+getData();
 
 renderNewProduct();
